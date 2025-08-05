@@ -1,0 +1,206 @@
+/* Reset default styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Base body styles */
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: #1A1B1E;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    color: #ECECF1;
+    overflow: hidden; /* Prevent page scrolling */
+}
+
+/* Header styling */
+.header {
+    background-color: #2A2B2E;
+    padding: 16px 24px;
+    border-bottom: 1px solid #3A3B3E;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.header h1 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Neural network icon in header */
+.header h1::before {
+    content: "";
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ECECF1'%3E%3Cpath d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'/%3E%3C/svg%3E");
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+
+/* Main chat container */
+.chat-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    max-width: 1000px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 0 20px;
+    background-color: #2A2B2E;
+    position: relative;
+    margin-bottom: -20px;
+    height: calc(100vh - 73px); /* Full height minus header */
+    overflow: hidden;
+}
+
+/* Scrollable chat box */
+.chat-box {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px 0;
+    scroll-behavior: smooth;
+    margin-bottom: 20px;
+    border-radius: 0 0 16px 16px;
+    background-color: #2A2B2E;
+    height: calc(100% - 100px); /* Leave space for input */
+}
+
+/* Message styling */
+.message {
+    padding: 24px;
+    margin-bottom: 1px;
+    line-height: 1.6;
+    font-size: 16px;
+}
+
+.user-message {
+    background-color: #2A2B2E;
+}
+
+.bot-message {
+    background-color: #35363A;
+}
+
+/* Fixed input container at bottom */
+.input-container {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 1000px;
+    width: calc(100% - 40px);
+    z-index: 1;
+    background-color: #2A2B2E;
+    padding: 0 0px;
+}
+
+/* Input wrapper with styling */
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    background-color: #35363A;
+    border: 1px solid #4A4B4E;
+    border-radius: 16px;
+    padding: 12px 16px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.input-wrapper:focus-within {
+    border-color: #5A5B5E;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Textarea styling */
+#message-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: #ECECF1;
+    font-size: 16px;
+    padding: 8px 12px;
+    outline: none;
+    resize: none;
+    min-height: 24px;
+    max-height: 200px;
+    overflow-y: auto;
+    line-height: 1.5;
+    width: 100%;
+}
+
+#message-input::placeholder {
+    color: #8E8EA0;
+}
+
+/* Button styling */
+button {
+    background-color: transparent;
+    border: none;
+    color: #ECECF1;
+    padding: 8px;
+    cursor: pointer;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    margin-left: 8px;
+}
+
+button:hover {
+    background-color: #4A4B4E;
+    transform: scale(1.05);
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.send-icon {
+    width: 24px;
+    height: 24px;
+    fill: currentColor;
+}
+
+/* Custom scrollbar styling */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #4A4B4E;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #5A5B5E;
+}
+
+/* Gradient overlay for chat box */
+.chat-box::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 100px;
+    background: linear-gradient(to bottom, transparent, #2A2B2E);
+    pointer-events: none;
+    border-radius: 0 0 16px 16px;
+} 

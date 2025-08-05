@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatLite</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23ECECF1'><path d='M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5'/></svg>">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <div class="header">
+        <h1>ChatLite</h1>
+    </div>
+    <div class="chat-container">
+        <div class="chat-box" id="chat-box"></div>
+    </div>
+    <div class="input-container">
+        <div class="input-wrapper">
+            <textarea 
+                id="message-input" 
+                placeholder="Type your message here..." 
+                rows="1" 
+                autofocus
+                style="width: 100%;"
+            ></textarea>
+            <button onclick="sendMessage()" id="send-button">
+                <svg class="send-icon" viewBox="0 0 24 24">
+                    <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const messageInput = document.getElementById('message-input');
+        const chatBox = document.getElementById('chat-box');
+        const sendButton = document.getElementById('send-button');
+
+        // Auto-resize textarea
+        messageInput.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 200) + 'px';
+        });
+
+        messageInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        async function sendMessage() {
+            const message = messageInput.value.trim();
+            if (!message) return;
+
+            // Disable input while processing
+            messageInput.disabled = true;
+            sendButton.disabled = true;
+
+            // Add user message to chat
+            addMessage(message, 'user');
+            messageInput.value = '';
+            messageInput.style.height = 'auto';
+
+            // Create a new message div for the bot's response
+            const botMessageDiv = document.createElement('div');
+            botMessageDiv.className = 'message bot-message';
+            chatBox.appendChild(botMessageDiv);
+
+            try {
+                const response = await fetch('/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `message=${encodeURIComponent(message)}`
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let botResponse = '';
+
+                while (true) {
+                    const {value, done} = await reader.read();
+                    if (done) break;
+                    
+                    const chunk = decoder.decode(value);
+                    const lines = chunk.split('\n');
+                    
+                    for (const line of lines) {
+                        if (line.startsWith('data: ')) {
+                            const data = line.slice(6);
+                            if (data === '[DONE]') continue;
+                            
+                            try {
+                                const content = JSON.parse(data).data;
+                                botResponse += content;
+                                botMessageDiv.textContent = botResponse;
+                                chatBox.scrollTop = chatBox.scrollHeight;
+                            } catch (e) {
+                                console.error('Error parsing SSE data:', e, 'Raw data:', data);
+                            }
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Error in sendMessage:', error);
+                botMessageDiv.textContent = 'Sorry, there was an error processing your message.';
+            } finally {
+                // Re-enable input
+                messageInput.disabled = false;
+                sendButton.disabled = false;
+                messageInput.focus();
+            }
+        }
+
+        function addMessage(text, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}-message`;
+            messageDiv.textContent = text;
+            chatBox.appendChild(messageDiv);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+    </script>
+</body>
+</html> 
